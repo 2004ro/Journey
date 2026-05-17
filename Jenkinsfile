@@ -81,8 +81,10 @@ EOF
 
         stage('Deploy with Docker Compose') {
             steps {
-                sh 'docker-compose down --remove-orphans || true'
-                sh 'docker-compose up -d --pull always'
+                // Force remove any conflicting containers by name
+                sh 'docker rm -f travel_db travel_backend travel_frontend || true'
+                sh 'docker-compose down --remove-orphans --volumes || true'
+                sh 'docker-compose up -d'
             }
         }
     }
