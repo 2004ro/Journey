@@ -66,6 +66,19 @@ pipeline {
             }
         }
 
+        stage('Create .env File') {
+            steps {
+                sh '''
+                    cat > .env << EOF
+DB_USER=travel_user
+DB_PASSWORD=travel_password
+DB_NAME=traveldb
+DB_PORT=5432
+EOF
+                '''
+            }
+        }
+
         stage('Deploy with Docker Compose') {
             steps {
                 sh 'docker-compose down --remove-orphans || true'
