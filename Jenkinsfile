@@ -2,13 +2,15 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_CREDENTIALS = credentials('dockerhub-credentials')
-        IMAGE_FRONTEND = 'yourdockerhub/travel-frontend'
-        IMAGE_BACKEND = 'yourdockerhub/travel-backend'
-        TAG = "${env.BUILD_ID}"
+        DOCKER_CREDENTIALS = credentials('dockerhub-credentials')
+        DOCKER_USERNAME    = "${DOCKER_CREDENTIALS_USR}"
+        IMAGE_FRONTEND     = "${DOCKER_CREDENTIALS_USR}/travel-frontend"
+        IMAGE_BACKEND      = "${DOCKER_CREDENTIALS_USR}/travel-backend"
+        TAG                = "${env.BUILD_NUMBER}"
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -26,8 +28,25 @@ pipeline {
         stage('Build Frontend') {
             steps {
                 dir('frontend') {
-                    sh 'npm install'
+                    sh 'npm ci'
                     sh 'npm run build'
+                }
+            }
+        }
+
+        stage('Docker Login') {
+            steps {
+                sh 'echo "$DOCKER_CREDENTIALS_PSW" | docker login -u "$DOCKER_CREDENTIALS_USR" --password-stdin'
+            }
+        }
+
+        stage('Docker Build & Push Backend') {
+            steps {
+                dir('backend') {
+                    sh "docker build -t ${IMAGE_BACKEND}:${TAG} ."
+                    sh "docker tag  ${IMAGE_BACKEND}:${TAG} ${IMAGE_BACKEND}:latest"
+                    sh "docker push ${IMAGE_BACKEND}:${TAG}"
+                    sh "docker push ${IMAGE_BACKEND}:latest"
                 }
             }
         }
@@ -35,35 +54,31 @@ pipeline {
         stage('Docker Build & Push Frontend') {
             steps {
                 dir('frontend') {
-                    sh 'docker build -t $IMAGE_FRONTEND:$TAG .'
-                    sh 'echo $DOCKER_HUB_CREDENTIALS_PSW | docker login -u $DOCKER_HUB_CREDENTIALS_USR --password-stdin'
-                    sh 'docker push $IMAGE_FRONTEND:$TAG'
-                    sh 'docker push $IMAGE_FRONTEND:latest'
+                    sh "docker build -t ${IMAGE_FRONTEND}:${TAG} ."
+                    sh "docker tag  ${IMAGE_FRONTEND}:${TAG} ${IMAGE_FRONTEND}:latest"
+                    sh "docker push ${IMAGE_FRONTEND}:${TAG}"
+                    sh "docker push ${IMAGE_FRONTEND}:latest"
                 }
             }
         }
 
-        stage('Docker Build & Push Backend') {
+        stage('Deploy with Docker Compose') {
             steps {
-                dir('backend') {
-                    sh 'docker build -t $IMAGE_BACKEND:$TAG .'
-                    sh 'docker push $IMAGE_BACKEND:$TAG'
-                    sh 'docker push $IMAGE_BACKEND:latest'
-                }
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                sh 'docker-compose down'
-                sh 'docker-compose up -d'
+                sh 'docker compose down --remove-orphans || true'
+                sh 'docker compose up -d --pull always'
             }
         }
     }
-    
+
     post {
         always {
             sh 'docker logout'
+        }
+        success {
+            echo "✅ Build #${env.BUILD_NUMBER} deployed successfully!"
+        }
+        failure {
+            echo "❌ Build #${env.BUILD_NUMBER} failed. Check logs above."
         }
     }
 }
