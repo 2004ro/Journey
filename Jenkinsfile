@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven3'
+    }
+
     environment {
         DOCKER_CREDENTIALS = credentials('dockerhubcredentials')
         DOCKER_USERNAME    = "${DOCKER_CREDENTIALS_USR}"
@@ -44,7 +48,7 @@ pipeline {
             steps {
                 dir('backend') {
                     sh "docker build -t ${IMAGE_BACKEND}:${TAG} ."
-                    sh "docker tag  ${IMAGE_BACKEND}:${TAG} ${IMAGE_BACKEND}:latest"
+                    sh "docker tag ${IMAGE_BACKEND}:${TAG} ${IMAGE_BACKEND}:latest"
                     sh "docker push ${IMAGE_BACKEND}:${TAG}"
                     sh "docker push ${IMAGE_BACKEND}:latest"
                 }
@@ -55,7 +59,7 @@ pipeline {
             steps {
                 dir('frontend') {
                     sh "docker build -t ${IMAGE_FRONTEND}:${TAG} ."
-                    sh "docker tag  ${IMAGE_FRONTEND}:${TAG} ${IMAGE_FRONTEND}:latest"
+                    sh "docker tag ${IMAGE_FRONTEND}:${TAG} ${IMAGE_FRONTEND}:latest"
                     sh "docker push ${IMAGE_FRONTEND}:${TAG}"
                     sh "docker push ${IMAGE_FRONTEND}:latest"
                 }
@@ -72,11 +76,13 @@ pipeline {
 
     post {
         always {
-            sh 'docker logout'
+            sh 'docker logout || true'
         }
+
         success {
             echo "✅ Build #${env.BUILD_NUMBER} deployed successfully!"
         }
+
         failure {
             echo "❌ Build #${env.BUILD_NUMBER} failed. Check logs above."
         }
