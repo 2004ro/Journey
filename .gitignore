@@ -1,0 +1,9 @@
+.env
+.idea/
+.vscode/
+target/
+*.jar
+*.war
+node_modules/
+dist/
+build/
