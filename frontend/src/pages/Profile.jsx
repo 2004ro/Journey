@@ -1,7 +1,8 @@
 import React from 'react';
 
 const Profile = () => {
-  const email = localStorage.getItem('userEmail');
+  const email = localStorage.getItem('userEmail') || 'guest@example.com';
+  const name = localStorage.getItem('userName') || email.split('@')[0];
   const role = email === 'admin@admin.com' ? 'System Administrator' : 'Traveller';
   
   return (
@@ -19,7 +20,7 @@ const Profile = () => {
             {email.charAt(0).toUpperCase()}
           </div>
           <div>
-            <h3 style={{ margin: '0 0 0.5rem 0' }}>{email.split('@')[0].toUpperCase()}</h3>
+            <h3 style={{ margin: '0 0 0.5rem 0' }}>{name.toUpperCase()}</h3>
             <p style={{ margin: '0', color: 'var(--text-muted)' }}>{email}</p>
             <span className="badge booked" style={{ display: 'inline-block', marginTop: '0.5rem' }}>{role}</span>
           </div>
@@ -27,12 +28,16 @@ const Profile = () => {
 
         <div className="form-group">
           <label>Docker Environment Status</label>
-          <input type="text" className="form-control" value="All Services Running (Frontend, Backend, Postgres)" disabled style={{ opacity: 0.8 }} />
+            <input type="text" className="form-control" value="All Services Running (Frontend, Backend, Postgres)" disabled style={{ opacity: 0.8 }} />
         </div>
         <div className="form-group">
           <label>Account Status</label>
           <input type="text" className="form-control" value="Active & Verified" disabled style={{ opacity: 0.8 }} />
         </div>
+
+          <div style={{ marginTop: '1rem', color: 'var(--text-muted)' }}>
+            <strong>Note:</strong> This profile data is stored locally for the demo (no user database implemented).
+          </div>
 
       </div>
     </div>

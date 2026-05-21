@@ -4,6 +4,8 @@ import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import AdminDashboard from './pages/AdminDashboard'
 import Profile from './pages/Profile'
+import Signup from './pages/Signup'
+import BookingFlow from './pages/booking/BookingFlow'
 import './index.css'
 
 function App() {
@@ -63,6 +65,8 @@ function App() {
         {/* Routes */}
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/book/*" element={user ? <BookingFlow /> : <Navigate to="/login" />} />
           <Route path="/dashboard" element={
             !user ? <Navigate to="/login" /> : (isAdmin ? <AdminDashboard /> : <Dashboard />)
           } />

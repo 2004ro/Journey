@@ -13,7 +13,7 @@ const Login = () => {
     try {
       // Typically you would point to http://localhost:8080/api/auth/login
       // Using a try-catch for local demo if backend is not running
-      const res = await axios.post('http://localhost:8080/api/auth/login', {
+      const res = await axios.post('http://localhost:8081/api/auth/login', {
         email,
         password
       }).catch(err => {
@@ -61,9 +61,10 @@ const Login = () => {
             Sign In
           </button>
         </form>
-        <p style={{ textAlign: 'center', marginTop: '1.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-          *Use any credentials for demo
+        <p style={{ textAlign: 'center', marginTop: '1rem' }}>
+          Don't have an account? <a href="/signup">Create one</a>
         </p>
+        
       </div>
     </div>
   );

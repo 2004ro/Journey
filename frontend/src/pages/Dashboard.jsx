@@ -36,7 +36,7 @@ const Dashboard = () => {
 
   const fetchBookings = async () => {
     try {
-      const res = await axios.get(`http://localhost:8080/api/bookings/user/${email}`);
+      const res = await axios.get(`http://localhost:8081/api/bookings/user/${email}`);
       setBookings(res.data);
     } catch (err) {
       if(bookings.length === 0) {
@@ -70,7 +70,7 @@ const Dashboard = () => {
     setPaymentProcessing(true);
     setTimeout(async () => {
       try {
-        await axios.post('http://localhost:8080/api/bookings/book', pendingBooking);
+        await axios.post('http://localhost:8081/api/bookings/book', pendingBooking);
         setPaymentProcessing(false);
         setShowPaymentModal(false);
         showToast('🎉 Ticket Booked Successfully!');
@@ -86,8 +86,10 @@ const Dashboard = () => {
   };
 
   const handleCancel = async (id) => {
+    const ok = window.confirm('Are you sure you want to cancel this booking?');
+    if (!ok) return;
     try {
-      await axios.put(`http://localhost:8080/api/bookings/cancel/${id}`);
+      await axios.put(`http://localhost:8081/api/bookings/cancel/${id}`);
       fetchBookings();
       showToast('❌ Ticket Cancelled');
     } catch (err) {
@@ -154,68 +156,13 @@ const Dashboard = () => {
 
       <div className="glass-card">
         {activeTab === 'search' ? (
-          <div>
-            <h2>Find Your Perfect Journey</h2>
-            <form onSubmit={handleBookInitiate} style={{ marginTop: '2rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-              <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-                <h4 style={{ margin: '0 0 1rem 0', color: 'var(--primary)' }}>1. Journey Details</h4>
-              </div>
-              <div className="form-group">
-                <label>Transport Type</label>
-                <select className="form-control" value={searchForm.type} onChange={(e) => setSearchForm({...searchForm, type: e.target.value})}>
-                  <option value="BUS">Bus</option>
-                  <option value="TRAIN">Train</option>
-                  <option value="FLIGHT">Flight</option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label>Date of Journey</label>
-                <input type="date" className="form-control" required min={todayDate} value={searchForm.date} onChange={(e) => setSearchForm({...searchForm, date: e.target.value})} />
-              </div>
-              <div className="form-group">
-                <label>Source City</label>
-                <input type="text" className="form-control" placeholder="e.g. New York" required value={searchForm.source} onChange={(e) => setSearchForm({...searchForm, source: e.target.value})} />
-              </div>
-              <div className="form-group">
-                <label>Destination City</label>
-                <input type="text" className="form-control" placeholder="e.g. London" required value={searchForm.destination} onChange={(e) => setSearchForm({...searchForm, destination: e.target.value})} />
-              </div>
-
-              <div className="form-group" style={{ gridColumn: '1 / -1', marginTop: '1rem' }}>
-                <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--primary)' }}>2. Interactive Seat Selection</h4>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>Select your preferred seat. Grey seats are already booked.</p>
-                <div className="seat-grid">
-                  {seats.map(s => (
-                    <div 
-                      key={s.id} 
-                      className={`seat ${s.isOccupied ? 'occupied' : ''} ${searchForm.seat === s.id ? 'selected' : ''}`}
-                      onClick={() => !s.isOccupied && setSearchForm({...searchForm, seat: s.id})}
-                    >
-                      {s.id}
-                    </div>
-                  ))}
-                </div>
-                <div style={{ marginTop: '1rem', fontSize: '0.9rem', color: 'var(--text-main)' }}>
-                  Selected Seat: <strong>{searchForm.seat || 'None'}</strong>
-                </div>
-              </div>
-
-              <div className="form-group" style={{ gridColumn: '1 / -1', marginTop: '1rem' }}>
-                <h4 style={{ margin: '0 0 1rem 0', color: 'var(--primary)' }}>3. Passenger Details</h4>
-              </div>
-              <div className="form-group">
-                <label>Full Name</label>
-                <input type="text" className="form-control" placeholder="Passenger Name" required value={searchForm.passengerName} onChange={(e) => setSearchForm({...searchForm, passengerName: e.target.value})} />
-              </div>
-              <div className="form-group">
-                <label>Age</label>
-                <input type="number" className="form-control" placeholder="Age" required min="1" max="120" value={searchForm.passengerAge} onChange={(e) => setSearchForm({...searchForm, passengerAge: e.target.value})} />
-              </div>
-
-              <div style={{ gridColumn: '1 / -1', marginTop: '1rem' }}>
-                <button type="submit" className="btn-primary" style={{ width: '100%' }}>Proceed to Payment</button>
-              </div>
-            </form>
+          <div style={{ textAlign: 'center', padding: '4rem 2rem' }}>
+            <h2>Start a New Booking</h2>
+            <p style={{ color: 'var(--text-muted)' }}>The booking flow is split across three pages: Journey Details → Seat Selection → Passenger Details</p>
+            <div style={{ marginTop: '2rem', display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <a href="/book/details" className="btn-primary" style={{ padding: '0.8rem 1.2rem' }}>🚀 Start Booking</a>
+              <a href="/book/details" className="btn-control" style={{ padding: '0.8rem 1.2rem' }}>How it works</a>
+            </div>
           </div>
         ) : (
           <div>
