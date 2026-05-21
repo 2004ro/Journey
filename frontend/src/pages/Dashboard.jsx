@@ -42,12 +42,22 @@ const Dashboard = () => {
 
   const fetchBookings = async () => {
     try {
-      const res = await axios.get(`http://localhost:8081/api/bookings/user/${email}`);
-      // ensure currency formatting is consistent (INR)
-      const data = res.data.map(b => ({ ...b, price: b.price, currency: 'INR' }));
+      const [res, citiesRes] = await Promise.all([
+        axios.get(`http://localhost:8081/api/bookings/user/${email}`),
+        axios.get('http://localhost:8081/api/cities')
+      ]);
+      const cityMap = {};
+      (citiesRes.data || []).forEach(c => { cityMap[String(c.id)] = c.name; });
+      const data = (res.data || []).map(b => ({
+        ...b,
+        price: b.price,
+        currency: 'INR',
+        sourceName: b.sourceName || cityMap[String(b.source)] || b.source,
+        destinationName: b.destinationName || cityMap[String(b.destination)] || b.destination
+      }));
       setBookings(data);
     } catch (err) {
-      if(bookings.length === 0) {
+      if (bookings.length === 0) {
         setBookings([{ id: 1, type: 'FLIGHT', source: 'New York', destination: 'London', date: '2026-06-01', status: 'BOOKED', price: 450.00, passengerName: 'John Doe', passengerAge: 22 }]);
       }
     }
@@ -197,7 +207,7 @@ const Dashboard = () => {
                         {booking.type === 'BUS' && '🚌 '}
                         {booking.type}
                       </td>
-                      <td>{booking.source} &rarr; {booking.destination}</td>
+                      <td>{booking.sourceName || booking.source} &rarr; {booking.destinationName || booking.destination}</td>
                       <td>
                         {booking.passengerName || 'N/A'} <br/>
                         <span style={{fontSize: '0.8rem', color: 'var(--text-muted)'}}>Age: {booking.passengerAge || 'N/A'}</span>

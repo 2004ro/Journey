@@ -13,6 +13,8 @@ public class Ticket {
     private String type; // BUS, TRAIN, FLIGHT
     private String source;
     private String destination;
+    private String sourceName;
+    private String destinationName;
     private String date;
     private String status; // BOOKED, CANCELLED
     private String userEmail;
@@ -32,6 +34,12 @@ public class Ticket {
     
     public String getDestination() { return destination; }
     public void setDestination(String destination) { this.destination = destination; }
+    
+    public String getSourceName() { return sourceName; }
+    public void setSourceName(String sourceName) { this.sourceName = sourceName; }
+
+    public String getDestinationName() { return destinationName; }
+    public void setDestinationName(String destinationName) { this.destinationName = destinationName; }
     
     public String getDate() { return date; }
     public void setDate(String date) { this.date = date; }

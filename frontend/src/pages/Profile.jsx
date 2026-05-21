@@ -27,17 +27,21 @@ const Profile = () => {
         </div>
 
         <div className="form-group">
-          <label>Docker Environment Status</label>
-            <input type="text" className="form-control" value="All Services Running (Frontend, Backend, Postgres)" disabled style={{ opacity: 0.8 }} />
+          <label>Full Name</label>
+          <input type="text" className="form-control" value={name} disabled />
         </div>
         <div className="form-group">
-          <label>Account Status</label>
-          <input type="text" className="form-control" value="Active & Verified" disabled style={{ opacity: 0.8 }} />
+          <label>Email</label>
+          <input type="text" className="form-control" value={email} disabled />
+        </div>
+        <div className="form-group">
+          <label>Member Since</label>
+          <input type="text" className="form-control" value="2023-01-01" disabled style={{ opacity: 0.9 }} />
         </div>
 
-          <div style={{ marginTop: '1rem', color: 'var(--text-muted)' }}>
-            <strong>Note:</strong> This profile data is stored locally for the demo (no user database implemented).
-          </div>
+        <div style={{ marginTop: '1rem', color: 'var(--text-muted)' }}>
+          <strong>Note:</strong> Profile is currently stored locally for demo purposes. To persist real users, implement server-side user accounts and authentication.
+        </div>
 
       </div>
     </div>

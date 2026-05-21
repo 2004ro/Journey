@@ -24,11 +24,13 @@ const PassengerDetails = () => {
       type: draft.type,
       source: draft.sourceId ? draft.sourceId : draft.source,
       destination: draft.destinationId ? draft.destinationId : draft.destination,
+      sourceName: draft.sourceName || '',
+      destinationName: draft.destinationName || '',
       date: draft.date,
       seat: draft.seat,
       passengerName: name,
       passengerAge: age,
-      userEmail: email,
+      userEmail: email ? email.toLowerCase() : email,
       price: priceInfo ? priceInfo.price : 0
     };
 

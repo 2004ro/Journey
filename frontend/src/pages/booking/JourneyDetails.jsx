@@ -18,15 +18,19 @@ const JourneyDetails = () => {
 
   const saveAndNext = async (e) => {
     e.preventDefault();
-    // save draft
-    localStorage.setItem('bookingDraft', JSON.stringify(form));
     // compute price (optional)
     try {
       const res = await axios.post('http://localhost:8081/api/cities/price', { sourceId: form.sourceId, destinationId: form.destinationId, type: form.type });
       localStorage.setItem('bookingPrice', JSON.stringify(res.data));
     } catch (err) {
-      // ignore
+      // ignore price failures
     }
+    // augment draft with city names for clearer storage
+    const src = cities.find(c => String(c.id) === String(form.sourceId));
+    const dst = cities.find(c => String(c.id) === String(form.destinationId));
+    const draft = { ...form, sourceName: src ? src.name : '', destinationName: dst ? dst.name : '' };
+    // save draft
+    localStorage.setItem('bookingDraft', JSON.stringify(draft));
     navigate('/book/seats');
   };
 
