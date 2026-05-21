@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const Dashboard = () => {
@@ -98,6 +99,12 @@ const Dashboard = () => {
     }
   };
 
+  const navigate = useNavigate();
+
+  const goStartBooking = () => {
+    navigate('/book/details');
+  };
+
   return (
     <div style={{ width: '100%', maxWidth: '1000px' }}>
       
@@ -156,12 +163,11 @@ const Dashboard = () => {
 
       <div className="glass-card">
         {activeTab === 'search' ? (
-          <div style={{ textAlign: 'center', padding: '4rem 2rem' }}>
+          <div style={{ textAlign: 'center', padding: '2.5rem 1.5rem' }}>
             <h2>Start a New Booking</h2>
-            <p style={{ color: 'var(--text-muted)' }}>The booking flow is split across three pages: Journey Details → Seat Selection → Passenger Details</p>
-            <div style={{ marginTop: '2rem', display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-              <a href="/book/details" className="btn-primary" style={{ padding: '0.8rem 1.2rem' }}>🚀 Start Booking</a>
-              <a href="/book/details" className="btn-control" style={{ padding: '0.8rem 1.2rem' }}>How it works</a>
+            <p style={{ color: 'var(--text-muted)' }}>Booking flow: Journey Details → Seat Selection → Passenger Details</p>
+            <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <button onClick={goStartBooking} className="btn-primary" style={{ padding: '0.8rem 1.2rem', fontSize: '1rem' }}>🚀 Start Booking</button>
             </div>
           </div>
         ) : (
