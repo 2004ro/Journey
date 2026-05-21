@@ -72,3 +72,4 @@ jobs:
           context: ./frontend
           push: true
           tags: ronakbhamboo/travel-frontend:latest 
+          
