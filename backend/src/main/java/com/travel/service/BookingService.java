@@ -16,6 +16,7 @@ public class BookingService {
 
     public Ticket bookTicket(Ticket ticket) {
         ticket.setStatus("BOOKED");
+        if (ticket.getUserEmail() != null) ticket.setUserEmail(ticket.getUserEmail().toLowerCase());
         return ticketRepository.save(ticket);
     }
 

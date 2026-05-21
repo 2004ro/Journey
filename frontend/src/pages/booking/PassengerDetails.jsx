@@ -37,7 +37,8 @@ const PassengerDetails = () => {
       alert('Booking successful!');
       localStorage.removeItem('bookingDraft');
       localStorage.removeItem('bookingPrice');
-      navigate('/dashboard');
+      // redirect to dashboard and show history tab
+      navigate('/dashboard?tab=history');
     } catch (err) {
       // fallback
       alert('Booking (mock) successful!');

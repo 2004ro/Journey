@@ -35,7 +35,9 @@ const Profile = () => {
           <input type="text" className="form-control" value="Active & Verified" disabled style={{ opacity: 0.8 }} />
         </div>
 
-          {/* Hide developer/demo note from users in production UI. Keep data local but don't display a note. */}
+          <div style={{ marginTop: '1rem', color: 'var(--text-muted)' }}>
+            <strong>Note:</strong> This profile data is stored locally for the demo (no user database implemented).
+          </div>
 
       </div>
     </div>

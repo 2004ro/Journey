@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const Dashboard = () => {
@@ -9,6 +8,12 @@ const Dashboard = () => {
   const [paymentProcessing, setPaymentProcessing] = useState(false);
   const [toast, setToast] = useState('');
   const email = localStorage.getItem('userEmail');
+  // Read tab param from URL to allow deep-linking to history after booking
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get('tab');
+    if (tab === 'history') setActiveTab('history');
+  }, []);
 
   const todayDate = new Date().toISOString().split('T')[0];
 
@@ -38,7 +43,9 @@ const Dashboard = () => {
   const fetchBookings = async () => {
     try {
       const res = await axios.get(`http://localhost:8081/api/bookings/user/${email}`);
-      setBookings(res.data);
+      // ensure currency formatting is consistent (INR)
+      const data = res.data.map(b => ({ ...b, price: b.price, currency: 'INR' }));
+      setBookings(data);
     } catch (err) {
       if(bookings.length === 0) {
         setBookings([{ id: 1, type: 'FLIGHT', source: 'New York', destination: 'London', date: '2026-06-01', status: 'BOOKED', price: 450.00, passengerName: 'John Doe', passengerAge: 22 }]);
@@ -99,12 +106,6 @@ const Dashboard = () => {
     }
   };
 
-  const navigate = useNavigate();
-
-  const goStartBooking = () => {
-    navigate('/book/details');
-  };
-
   return (
     <div style={{ width: '100%', maxWidth: '1000px' }}>
       
@@ -120,7 +121,7 @@ const Dashboard = () => {
           <div className="glass-card" style={{ width: '400px', textAlign: 'center' }}>
             <h3>Secure Payment Gateway</h3>
             <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>
-              Amount to pay: <strong style={{ color: 'var(--text-main)', fontSize: '1.2rem' }}>${pendingBooking?.price}</strong>
+              Amount to pay: <strong style={{ color: 'var(--text-main)', fontSize: '1.2rem' }}>₹{pendingBooking?.price}</strong>
             </p>
             {paymentProcessing ? (
               <div style={{ margin: '2rem 0' }}>
@@ -163,11 +164,12 @@ const Dashboard = () => {
 
       <div className="glass-card">
         {activeTab === 'search' ? (
-          <div style={{ textAlign: 'center', padding: '2.5rem 1.5rem' }}>
+          <div style={{ textAlign: 'center', padding: '4rem 2rem' }}>
             <h2>Start a New Booking</h2>
-            <p style={{ color: 'var(--text-muted)' }}>Booking flow: Journey Details → Seat Selection → Passenger Details</p>
-            <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-              <button onClick={goStartBooking} className="btn-primary" style={{ padding: '0.8rem 1.2rem', fontSize: '1rem' }}>🚀 Start Booking</button>
+            <p style={{ color: 'var(--text-muted)' }}>The booking flow is split across three pages: Journey Details → Seat Selection → Passenger Details</p>
+            <div style={{ marginTop: '2rem', display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <a href="/book/details" className="btn-primary" style={{ padding: '0.8rem 1.2rem' }}>🚀 Start Booking</a>
+              <a href="/book/details" className="btn-control" style={{ padding: '0.8rem 1.2rem' }}>How it works</a>
             </div>
           </div>
         ) : (
@@ -201,7 +203,7 @@ const Dashboard = () => {
                         <span style={{fontSize: '0.8rem', color: 'var(--text-muted)'}}>Age: {booking.passengerAge || 'N/A'}</span>
                       </td>
                       <td>{booking.date}</td>
-                      <td>${booking.price?.toFixed(2)}</td>
+                      <td>₹{(booking.price || 0).toFixed(2)}</td>
                       <td>
                         <span className={`badge ${booking.status.toLowerCase()}`}>
                           {booking.status}

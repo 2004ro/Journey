@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const Signup = () => {
@@ -8,15 +7,13 @@ const Signup = () => {
   const [password, setPassword] = useState('');
   const [msg, setMsg] = useState('');
 
-  const navigate = useNavigate();
-
   const handleSignup = async (e) => {
     e.preventDefault();
-    // Save user locally (demo) and navigate within the SPA
+    // For demo we simply save email/name locally and redirect to login
     localStorage.setItem('userEmail', email);
     localStorage.setItem('userName', name);
-    setMsg('Account created. Redirecting...');
-    setTimeout(() => navigate('/dashboard'), 800);
+    setMsg('Account created (demo). Redirecting to dashboard...');
+    setTimeout(() => window.location.href = '/dashboard', 1000);
   };
 
   return (
@@ -40,7 +37,7 @@ const Signup = () => {
           <button className="btn-primary" style={{ width: '100%', marginTop: '1rem' }}>Create Account</button>
         </form>
         <p style={{ textAlign: 'center', marginTop: '1rem' }}>
-          Already have an account? <Link to="/login">Sign in</Link>
+          Already have an account? <a href="/login">Sign in</a>
         </p>
       </div>
     </div>

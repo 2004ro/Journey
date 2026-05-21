@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const Login = () => {
@@ -22,8 +22,10 @@ const Login = () => {
         return { data: { email, token: 'mock-token' } };
       });
       
-      localStorage.setItem('userEmail', res.data.email);
-      window.location.href = '/dashboard';
+      const userEmail = (res.data.email || email).toLowerCase();
+      localStorage.setItem('userEmail', userEmail);
+      // redirect directly to journey details as requested
+      window.location.href = '/book/details';
     } catch (err) {
       setError('Invalid credentials. Try any email/password.');
     }
@@ -62,7 +64,7 @@ const Login = () => {
           </button>
         </form>
         <p style={{ textAlign: 'center', marginTop: '1rem' }}>
-          Don't have an account? <Link to="/signup">Create one</Link>
+          Don't have an account? <a href="/signup">Create one</a>
         </p>
         
       </div>
