@@ -21,7 +21,7 @@ public class BookingService {
     }
 
     public List<Ticket> getUserBookings(String email) {
-        return ticketRepository.findByUserEmail(email);
+        return ticketRepository.findByUserEmail(email != null ? email.toLowerCase() : null);
     }
 
     public List<Ticket> getAllBookings() {

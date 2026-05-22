@@ -29,21 +29,38 @@ const PassengerDetails = () => {
       date: draft.date,
       seat: draft.seat,
       passengerName: name,
-      passengerAge: age,
+      passengerAge: parseInt(age),
       userEmail: email ? email.toLowerCase() : email,
       price: priceInfo ? priceInfo.price : 0
     };
 
-      try {
+    const localBooking = {
+      ...booking,
+      id: Date.now(),
+      status: 'BOOKED'
+    };
+
+    try {
       await axios.post('http://localhost:8081/api/bookings/book', booking);
-      alert('Booking successful!');
+      
+      // Save locally as a backup
+      const localBookings = JSON.parse(localStorage.getItem('mockBookings') || '[]');
+      localBookings.push(localBooking);
+      localStorage.setItem('mockBookings', JSON.stringify(localBookings));
+
+      alert('🎉 Booking successful!');
       localStorage.removeItem('bookingDraft');
       localStorage.removeItem('bookingPrice');
-      // redirect to dashboard and show history tab
-      navigate('/dashboard?tab=history');
+      navigate('/dashboard');
     } catch (err) {
-      // fallback
-      alert('Booking (mock) successful!');
+      // Fallback local persistence
+      const localBookings = JSON.parse(localStorage.getItem('mockBookings') || '[]');
+      localBookings.push(localBooking);
+      localStorage.setItem('mockBookings', JSON.stringify(localBookings));
+
+      alert('🎉 Booking (mock) successful!');
+      localStorage.removeItem('bookingDraft');
+      localStorage.removeItem('bookingPrice');
       navigate('/dashboard');
     }
   };

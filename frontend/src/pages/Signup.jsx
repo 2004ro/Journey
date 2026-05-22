@@ -9,11 +9,19 @@ const Signup = () => {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    // For demo we simply save email/name locally and redirect to login
-    localStorage.setItem('userEmail', email);
-    localStorage.setItem('userName', name);
-    setMsg('Account created (demo). Redirecting to dashboard...');
-    setTimeout(() => window.location.href = '/dashboard', 1000);
+    try {
+      await axios.post('http://localhost:8081/api/auth/signup', {
+        email: email.toLowerCase(),
+        name,
+        password
+      });
+      localStorage.setItem('userEmail', email.toLowerCase());
+      localStorage.setItem('userName', name);
+      setMsg('🎉 Account created successfully! Redirecting...');
+      setTimeout(() => window.location.href = '/book/details', 1000);
+    } catch (err) {
+      setMsg('❌ Error creating account. Please try again.');
+    }
   };
 
   return (

@@ -9,7 +9,8 @@ import BookingFlow from './pages/booking/BookingFlow'
 import './index.css'
 
 function App() {
-  const user = localStorage.getItem('userEmail');
+  const userRaw = localStorage.getItem('userEmail');
+  const user = userRaw ? userRaw.toLowerCase() : null;
   const isAdmin = user === 'admin@admin.com';
   const location = useLocation();
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
@@ -25,6 +26,9 @@ function App() {
 
   const handleLogout = () => {
     localStorage.removeItem('userEmail');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('bookingDraft');
+    localStorage.removeItem('bookingPrice');
     window.location.href = '/login';
   };
 
@@ -42,7 +46,10 @@ function App() {
             {isAdmin ? (
               <Link to="/dashboard" className={`sidebar-link ${location.pathname === '/dashboard' ? 'active' : ''}`}>📊 Admin Dashboard</Link>
             ) : (
-              <Link to="/dashboard" className={`sidebar-link ${location.pathname === '/dashboard' ? 'active' : ''}`}>🎫 My Bookings</Link>
+              <>
+                <Link to="/book/details" className={`sidebar-link ${location.pathname.startsWith('/book') ? 'active' : ''}`}>➕ Book a Ticket</Link>
+                <Link to="/dashboard" className={`sidebar-link ${location.pathname === '/dashboard' ? 'active' : ''}`}>🎫 My Bookings</Link>
+              </>
             )}
             <Link to="/profile" className={`sidebar-link ${location.pathname === '/profile' ? 'active' : ''}`}>👤 User Profile</Link>
           </nav>
@@ -71,7 +78,7 @@ function App() {
             !user ? <Navigate to="/login" /> : (isAdmin ? <AdminDashboard /> : <Dashboard />)
           } />
           <Route path="/profile" element={user ? <Profile /> : <Navigate to="/login" />} />
-          <Route path="*" element={<Navigate to={user ? "/dashboard" : "/login"} />} />
+          <Route path="*" element={<Navigate to={user ? (isAdmin ? "/dashboard" : "/book/details") : "/login"} />} />
         </Routes>
       </main>
     </div>
