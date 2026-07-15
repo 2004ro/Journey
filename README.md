@@ -135,14 +135,5 @@ The project supports Continuous Integration and Continuous Deployment using:
 * Real-Time Notifications
 * Cloud Deployment Support
 
-## 👨‍💻 Author
 
-**Ronak**
 
-GitHub: https://github.com/2004ro
-
-LinkedIn: https://www.linkedin.com/in/ronak-2738b1292/
-
----
-
-⭐ If you found this project useful, consider giving it a star.
